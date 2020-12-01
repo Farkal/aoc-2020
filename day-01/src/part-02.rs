@@ -15,11 +15,13 @@ fn main() {
 
     for i in &data {
         for j in &data {
-            let x = 2020 - i - j;
+            let x = 2020_u16.checked_sub(*i).and_then(|t| t.checked_sub(*j));
 
-            if data.binary_search(&x).is_ok() {
-                println!("{} * {} * {} = {}", x, i, j, j * x * i);
-                return;
+            if let Some(x) = x {
+                if data.binary_search(&x).is_ok() {
+                    println!("{} * {} * {} = {}", x, i, j, j * x * i);
+                    return;
+                }
             }
         }
     }
