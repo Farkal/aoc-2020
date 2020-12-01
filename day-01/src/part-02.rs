@@ -14,14 +14,11 @@ fn main() {
     data.sort_unstable();
 
     for i in &data {
-        for j in &data {
-            let x = 2020_u16.checked_sub(i + j);
-
-            if let Some(x) = x {
-                if data.binary_search(&x).is_ok() {
-                    println!("{} * {} * {} = {}", x, i, j, j * x * i);
-                    return;
-                }
+        for x in data.iter().filter_map(|j| 2020_u16.checked_sub(i + j)) {
+            if data.binary_search(&x).is_ok() {
+                let j = 2020 - x - i;
+                println!("{} * {} * {} = {}", x, i, j, j * x * i);
+                return;
             }
         }
     }
