@@ -11,7 +11,7 @@ fn main() {
         .map(|l| l.unwrap().parse::<u16>().unwrap())
         .collect();
 
-    data.sort();
+    data.sort_unstable();
 
     for i in &data {
         let x = 2020 - i;
