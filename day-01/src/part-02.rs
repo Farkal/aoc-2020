@@ -15,7 +15,7 @@ fn main() {
 
     for i in &data {
         for j in &data {
-            let x = 2020_u16.checked_sub(*i).and_then(|t| t.checked_sub(*j));
+            let x = 2020_u16.checked_sub(i + j);
 
             if let Some(x) = x {
                 if data.binary_search(&x).is_ok() {
