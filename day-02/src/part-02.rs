@@ -12,7 +12,7 @@ fn main() {
 
     let out = reader
         .lines()
-        .filter_map(|i| i.ok())
+        .map(|i| i.unwrap())
         .filter(|line| {
             let caps = re.captures(&line).unwrap();
 
