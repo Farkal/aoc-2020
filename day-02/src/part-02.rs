@@ -23,7 +23,7 @@ fn main() {
             let a = caps["pw"].as_bytes().get(min - 1);
             let b = caps["pw"].as_bytes().get(max - 1);
 
-            (a.map(|a| c == *a).unwrap_or(false) || b.map(|b| c == *b).unwrap_or(false)) && a != b
+            (a == Some(&c) || b == Some(&c)) && a != b
         })
         .count();
 
