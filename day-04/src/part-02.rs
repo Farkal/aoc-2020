@@ -45,10 +45,7 @@ fn main() {
                 let value = x.get(2).unwrap().as_bytes();
                 match key {
                     b"ecl" => {
-                        acc.ecl = match value {
-                            b"amb" | b"blu" | b"brn" | b"gry" | b"grn" | b"hzl" | b"oth" => true,
-                            _ => false,
-                        }
+                        acc.ecl = matches!(value, b"amb" | b"blu" | b"brn" | b"gry" | b"grn" | b"hzl" | b"oth")
                     }
                     b"pid" => {
                         acc.pid =
