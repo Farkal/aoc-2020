@@ -75,16 +75,13 @@ fn main() {
                     }
                     b"cid" => acc.cid = true,
                     b"hgt" => {
-                        acc.hgt = height_re
-                            .captures(value)
-                            .map(|caps| {
-                                let height = &bytes_as_u16(&caps["height"]);
-                                matches!(
-                                    (height, &caps["unit"]),
-                                    (150..=193, b"cm") | (59..=76, b"in")
-                                )
-                            })
-                            .unwrap_or(false)
+                        acc.hgt = height_re.captures(value).map_or(false, |caps| {
+                            let height = &bytes_as_u16(&caps["height"]);
+                            matches!(
+                                (height, &caps["unit"]),
+                                (150..=193, b"cm") | (59..=76, b"in")
+                            )
+                        })
                     }
                     v => panic!("unknown {}", std::str::from_utf8(v).unwrap()),
                 };
