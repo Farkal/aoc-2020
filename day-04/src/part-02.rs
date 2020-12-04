@@ -100,7 +100,7 @@ fn main() {
                             })
                             .unwrap_or(false)
                     }
-                    v => panic!("uknown {}", std::str::from_utf8(v).unwrap()),
+                    v => panic!("unknown {}", std::str::from_utf8(v).unwrap()),
                 };
                 acc
             });

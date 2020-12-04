@@ -45,7 +45,7 @@ fn main() {
                     b"iyr" => acc.iyr = true,
                     b"cid" => acc.cid = true,
                     b"hgt" => acc.hgt = true,
-                    v => panic!("uknown {}", std::str::from_utf8(v).unwrap()),
+                    v => panic!("unknown {}", std::str::from_utf8(v).unwrap()),
                 };
                 acc
             });
