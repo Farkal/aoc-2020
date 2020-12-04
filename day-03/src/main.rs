@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 
-fn slope(data: &Vec<Vec<bool>>, right: usize, down: usize) -> usize {
+fn slope(data: &[Vec<bool>], right: usize, down: usize) -> usize {
     let row_len = data[0].len();
 
     (0..data.len())
