@@ -27,19 +27,15 @@ fn main() {
     let f = File::open("input").unwrap();
     let reader = BufReader::new(f);
 
-    let mut out = 0;
-
-    let last = reader
+    let out = reader
         .byte_lines()
         .map(|i| i.unwrap())
-        .fold(Passport::default(), |acc, line| {
+        .chain(std::iter::once(Vec::new()))
+        .fold((0, Passport::default()), |(count, pass), line| {
             if line.is_empty() {
-                if acc.is_complete() {
-                    out += 1;
-                }
-                return Passport::default();
+                return (count + pass.is_complete() as usize, Passport::default());
             }
-            re.captures_iter(&line).fold(acc, |mut acc, x| {
+            let pass = re.captures_iter(&line).fold(pass, |mut acc, x| {
                 match x.get(1).unwrap().as_bytes() {
                     b"ecl" => acc.ecl = true,
                     b"pid" => acc.pid = true,
@@ -52,12 +48,9 @@ fn main() {
                     v => panic!("uknown {}", std::str::from_utf8(v).unwrap()),
                 };
                 acc
-            })
+            });
+            (count, pass)
         });
 
-    if last.is_complete() {
-        out += 1;
-    }
-
-    println!("Part 1: {}", out);
+    println!("Part 1: {}", out.0);
 }
