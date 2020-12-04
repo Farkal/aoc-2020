@@ -12,4 +12,5 @@ name = "day-04-part-02"
 path = "src/part-02.rs"
 
 [dependencies]
+bstr = "0.2.14"
 regex = "1.4.2"
