@@ -76,7 +76,7 @@ fn main() {
                     b"cid" => acc.cid = true,
                     b"hgt" => {
                         acc.hgt = height_re.captures(value).map_or(false, |caps| {
-                            let height = &bytes_as_u16(&caps["height"]);
+                            let height = bytes_as_u16(&caps["height"]);
                             matches!(
                                 (height, &caps["unit"]),
                                 (150..=193, b"cm") | (59..=76, b"in")
