@@ -45,7 +45,10 @@ fn main() {
                 let value = x.get(2).unwrap().as_bytes();
                 match key {
                     b"ecl" => {
-                        acc.ecl = matches!(value, b"amb" | b"blu" | b"brn" | b"gry" | b"grn" | b"hzl" | b"oth")
+                        acc.ecl = matches!(
+                            value,
+                            b"amb" | b"blu" | b"brn" | b"gry" | b"grn" | b"hzl" | b"oth"
+                        )
                     }
                     b"pid" => {
                         acc.pid =
@@ -91,13 +94,12 @@ fn main() {
                             .map(|caps| {
                                 let height = std::str::from_utf8(&caps["height"])
                                     .ok()
-                                    .and_then(|x| x.parse::<u16>().ok());
-                                let unit = &caps["unit"];
-                                match (height, unit) {
-                                    (Some(height), b"cm") => (150..=193).contains(&height),
-                                    (Some(height), b"in") => (59..=76).contains(&height),
-                                    (_, _) => false,
-                                }
+                                    .and_then(|x| x.parse::<u16>().ok())
+                                    .unwrap_or(0);
+                                matches!(
+                                    (height, &caps["unit"]),
+                                    (150..=193, b"cm") | (59..=76, b"in")
+                                )
                             })
                             .unwrap_or(false)
                     }
