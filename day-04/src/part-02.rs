@@ -21,6 +21,13 @@ impl Passport {
     }
 }
 
+fn bytes_as_u16(value: &[u8]) -> u16 {
+    std::str::from_utf8(value)
+        .ok()
+        .and_then(|x| x.parse::<u16>().ok())
+        .unwrap_or(0)
+}
+
 fn main() {
     let re = Regex::new(r"(\S+):(\S+)").unwrap();
 
@@ -51,48 +58,27 @@ fn main() {
                         acc.pid =
                             value.len() == 9 && value.iter().all(|a| (b'0'..=b'9').contains(a))
                     }
-                    b"eyr" => {
-                        acc.eyr = (2020..=2030).contains(
-                            &std::str::from_utf8(value)
-                                .ok()
-                                .and_then(|x| x.parse::<u16>().ok())
-                                .unwrap_or(0),
-                        )
-                    }
+                    b"eyr" => acc.eyr = (2020..=2030).contains(&bytes_as_u16(value)),
                     b"hcl" => {
                         acc.hcl = value[0] == b'#'
                             && value.len() == 7
-                            && value[1..]
+                            && value
                                 .iter()
+                                .skip(1)
                                 .all(|a| (b'0'..=b'9').contains(a) || (b'a'..=b'f').contains(a))
                     }
                     b"byr" => {
-                        acc.byr = value.len() == 4
-                            && (1920..=2002).contains(
-                                &std::str::from_utf8(value)
-                                    .ok()
-                                    .and_then(|x| x.parse::<u16>().ok())
-                                    .unwrap_or(0),
-                            )
+                        acc.byr = value.len() == 4 && (1920..=2002).contains(&bytes_as_u16(value))
                     }
                     b"iyr" => {
-                        acc.iyr = value.len() == 4
-                            && (2010..=2020).contains(
-                                &std::str::from_utf8(value)
-                                    .ok()
-                                    .and_then(|x| x.parse::<u16>().ok())
-                                    .unwrap_or(0),
-                            )
+                        acc.iyr = value.len() == 4 && (2010..=2020).contains(&bytes_as_u16(value))
                     }
                     b"cid" => acc.cid = true,
                     b"hgt" => {
                         acc.hgt = height_re
                             .captures(value)
                             .map(|caps| {
-                                let height = std::str::from_utf8(&caps["height"])
-                                    .ok()
-                                    .and_then(|x| x.parse::<u16>().ok())
-                                    .unwrap_or(0);
+                                let height = &bytes_as_u16(&caps["height"]);
                                 matches!(
                                     (height, &caps["unit"]),
                                     (150..=193, b"cm") | (59..=76, b"in")
