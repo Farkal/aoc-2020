@@ -1,8 +1,0 @@
-[package]
-name = "day-05"
-version = "0.1.0"
-edition = "2018"
-
-[dependencies]
-bstr = "0.2.14"
-itertools = "0.9.0"
