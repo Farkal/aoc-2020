@@ -1,7 +1,7 @@
 use bstr::ByteSlice;
 use itertools::Itertools;
-use std::io::Read;
-use std::{collections::HashSet, fs::File};
+use rayon::prelude::*;
+use std::{collections::HashSet, fs::File, io::Read};
 
 type Parsed = Vec<Vec<Vec<u8>>>;
 type Out = usize;
@@ -26,10 +26,10 @@ fn parse_input(input: &[u8]) -> Parsed {
 }
 
 fn part_1(data: &Parsed) -> Out {
-    data
-        .iter()
+    data.par_iter()
         .map(|passenger_group| {
-            passenger_group.iter()
+            passenger_group
+                .iter()
                 .map(|passenger| passenger.iter().collect::<HashSet<_>>())
                 .fold1(|acc, passenger| acc.union(&passenger).copied().collect())
                 .unwrap()
@@ -39,10 +39,10 @@ fn part_1(data: &Parsed) -> Out {
 }
 
 fn part_2(data: &Parsed) -> Out {
-    data
-        .iter()
+    data.par_iter()
         .map(|passenger_group| {
-            passenger_group.iter()
+            passenger_group
+                .iter()
                 .map(|passenger| passenger.iter().collect::<HashSet<_>>())
                 .fold1(|acc, passenger| acc.intersection(&passenger).copied().collect())
                 .unwrap()
