@@ -3,8 +3,7 @@
 use bstr::ByteSlice;
 use bstr_parse::*;
 use itertools::Itertools;
-use std::io::Read;
-use std::{collections::HashSet, fs::File};
+use std::{collections::HashSet, fs::File, io::Read};
 
 fn read_input() -> Vec<u8> {
     let mut out = Vec::new();

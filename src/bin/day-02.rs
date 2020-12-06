@@ -2,8 +2,7 @@ use bstr::ByteSlice;
 use bstr_parse::*;
 use memchr::memchr_iter;
 use regex::bytes::Regex;
-use std::fs::File;
-use std::io::Read;
+use std::{fs::File, io::Read};
 
 struct Password {
     pub min: usize,
@@ -38,8 +37,7 @@ fn parse_input(input: &[u8]) -> Vec<Password> {
 }
 
 fn part_1(data: &Vec<Password>) -> usize {
-    data
-        .iter()
+    data.iter()
         .filter(|pw| {
             let count = memchr_iter(pw.letter, &pw.password).count();
 
@@ -49,8 +47,7 @@ fn part_1(data: &Vec<Password>) -> usize {
 }
 
 fn part_2(data: &Vec<Password>) -> usize {
-    data
-        .iter()
+    data.iter()
         .filter(|pw| {
             let a = pw.password.get(pw.min);
             let b = pw.password.get(pw.max);

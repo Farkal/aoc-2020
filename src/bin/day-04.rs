@@ -1,8 +1,7 @@
 use bstr::ByteSlice;
 use bstr_parse::*;
 use regex::bytes::Regex;
-use std::fs::File;
-use std::io::Read;
+use std::{fs::File, io::Read};
 
 fn read_input() -> Vec<u8> {
     let mut out = Vec::new();

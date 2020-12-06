@@ -1,7 +1,6 @@
 use bstr::ByteSlice;
 use itertools::Itertools;
-use std::fs::File;
-use std::io::Read;
+use std::{fs::File, io::Read};
 
 fn read_input() -> Vec<u8> {
     let mut out = Vec::new();
@@ -12,8 +11,7 @@ fn read_input() -> Vec<u8> {
 }
 
 fn parse_input(data: &[u8]) -> Vec<u16> {
-    data
-        .lines()
+    data.lines()
         .map(|l| {
             l.iter()
                 .fold(0, |acc, c| acc << 1 | (c == &b'B' || c == &b'R') as u16)
@@ -26,8 +24,7 @@ fn part_1(input: &[u16]) -> u16 {
 }
 
 fn part_2(data: &[u16]) -> u16 {
-    data
-        .iter()
+    data.iter()
         .sorted()
         .tuple_windows()
         .find_map(|(a, b)| if a + 1 != *b { Some(a + 1) } else { None })
