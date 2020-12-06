@@ -1,10 +1,10 @@
 use bstr::ByteSlice;
 use itertools::Itertools;
 use rayon::prelude::*;
-use std::{collections::HashSet, fs::File, io::Read};
+use std::{fs::File, io::Read};
 
-type Parsed = Vec<Vec<Vec<u8>>>;
-type Out = usize;
+type Parsed = Vec<Vec<u32>>;
+type Out = u32;
 
 fn read_input() -> Vec<u8> {
     let mut out = Vec::new();
@@ -19,7 +19,7 @@ fn parse_input(input: &[u8]) -> Parsed {
         .split_str("\n\n")
         .map(|i| {
             i.lines()
-                .map(|l| l.iter().copied().collect_vec())
+                .map(|l| l.iter().map(|i| 1u32 << (i - b'a')).sum())
                 .collect_vec()
         })
         .collect_vec()
@@ -30,10 +30,10 @@ fn part_1(data: &Parsed) -> Out {
         .map(|passenger_group| {
             passenger_group
                 .iter()
-                .map(|passenger| passenger.iter().collect::<HashSet<_>>())
-                .fold1(|acc, passenger| acc.union(&passenger).copied().collect())
+                .copied()
+                .fold1(|acc, passenger| acc | passenger)
+                .map(|i| i.count_ones())
                 .unwrap()
-                .len()
         })
         .sum()
 }
@@ -43,10 +43,10 @@ fn part_2(data: &Parsed) -> Out {
         .map(|passenger_group| {
             passenger_group
                 .iter()
-                .map(|passenger| passenger.iter().collect::<HashSet<_>>())
-                .fold1(|acc, passenger| acc.intersection(&passenger).copied().collect())
+                .copied()
+                .fold1(|acc, passenger| acc & passenger)
+                .map(|i| i.count_ones())
                 .unwrap()
-                .len()
         })
         .sum()
 }
