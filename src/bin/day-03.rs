@@ -1,4 +1,5 @@
 use bstr::ByteSlice;
+use rayon::prelude::*;
 use std::{fs::File, io::Read};
 
 fn read_input() -> Vec<u8> {
@@ -41,7 +42,7 @@ fn part_1(data: &[Vec<bool>]) -> usize {
 
 fn part_2(data: &[Vec<bool>]) -> usize {
     [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
-        .iter()
+        .par_iter()
         .map(|(right, down)| slope(data, *right, *down))
         .product()
 }
