@@ -63,7 +63,7 @@ fn count_shiny_gold_bags<'a>(
         .unwrap_or(0);
 
     seen.insert(key, amount);
-    return amount;
+    amount
 }
 
 fn count_bags_in<'a>(
@@ -86,7 +86,7 @@ fn count_bags_in<'a>(
         + 1;
 
     seen.insert(key, amount);
-    return amount;
+    amount
 }
 
 fn part_1<'a>(data: &'a HashMap<&'a [u8], HashMap<&'a [u8], usize>>) -> Out {
