@@ -36,7 +36,7 @@ fn parse_input(input: &[u8]) -> Vec<Password> {
         .collect()
 }
 
-fn part_1(data: &Vec<Password>) -> usize {
+fn part_1(data: &[Password]) -> usize {
     data.iter()
         .filter(|pw| {
             let count = memchr_iter(pw.letter, &pw.password).count();
@@ -46,7 +46,7 @@ fn part_1(data: &Vec<Password>) -> usize {
         .count()
 }
 
-fn part_2(data: &Vec<Password>) -> usize {
+fn part_2(data: &[Password]) -> usize {
     data.iter()
         .filter(|pw| {
             let a = pw.password.get(pw.min);

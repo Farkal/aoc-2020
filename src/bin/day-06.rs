@@ -3,7 +3,6 @@ use itertools::Itertools;
 use rayon::prelude::*;
 use std::{fs::File, io::Read};
 
-type Parsed = Vec<Vec<u32>>;
 type Out = u32;
 
 fn read_input() -> Vec<u8> {
@@ -14,7 +13,7 @@ fn read_input() -> Vec<u8> {
     out
 }
 
-fn parse_input(input: &[u8]) -> Parsed {
+fn parse_input(input: &[u8]) -> Vec<Vec<u32>> {
     input
         .split_str("\n\n")
         .map(|i| {
@@ -25,7 +24,7 @@ fn parse_input(input: &[u8]) -> Parsed {
         .collect_vec()
 }
 
-fn part_1(data: &Parsed) -> Out {
+fn part_1(data: &[Vec<u32>]) -> Out {
     data.par_iter()
         .map(|passenger_group| {
             passenger_group
@@ -38,7 +37,7 @@ fn part_1(data: &Parsed) -> Out {
         .sum()
 }
 
-fn part_2(data: &Parsed) -> Out {
+fn part_2(data: &[Vec<u32>]) -> Out {
     data.par_iter()
         .map(|passenger_group| {
             passenger_group

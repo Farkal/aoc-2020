@@ -1,7 +1,7 @@
 use bstr::ByteSlice;
 use bstr_parse::*;
 use itertools::Itertools;
-use std::{collections::VecDeque, fs::File, io::Read, mem::swap};
+use std::{collections::VecDeque, fs::File, io::Read, mem::replace};
 
 type Parsed = Vec<Instruction>;
 type Out = i32;
@@ -44,17 +44,14 @@ fn part_1(mut data: Parsed) -> Out {
     let mut pc: i32 = 0;
 
     loop {
-        let mut inst = Instruction::End;
-        swap(&mut inst, &mut data[pc as usize]);
-
-        pc += 1;
-
-        match inst {
+        match replace(&mut data[pc as usize], Instruction::End) {
             Instruction::Acc(n) => acc += n,
             Instruction::Jmp(n) => pc = pc - 1 + n,
             Instruction::Nop(_) => {}
             Instruction::End => return acc,
         };
+
+        pc += 1;
     }
 }
 
@@ -66,10 +63,7 @@ fn part_2(mut data: Parsed) -> Out {
     let mut did_travel_back_in_time = false;
 
     while pc < data.len() as i32 {
-        let mut inst = Instruction::End;
-        swap(&mut inst, &mut data[pc as usize]);
-
-        match inst {
+        match replace(&mut data[pc as usize], Instruction::End) {
             Instruction::Acc(n) => acc += n,
             Instruction::Jmp(n) => {
                 if !did_travel_back_in_time {
