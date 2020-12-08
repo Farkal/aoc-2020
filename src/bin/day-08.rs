@@ -1,3 +1,5 @@
+#![feature(destructuring_assignment)]
+
 use bstr::ByteSlice;
 use bstr_parse::*;
 use itertools::Itertools;
@@ -46,7 +48,10 @@ fn part_1(mut data: Parsed) -> Out {
     loop {
         match replace(&mut data[pc as usize], Instruction::End) {
             Instruction::Acc(n) => acc += n,
-            Instruction::Jmp(n) => pc = pc - 1 + n,
+            Instruction::Jmp(n) => {
+                pc = pc + n;
+                continue;
+            }
             Instruction::Nop(_) => {}
             Instruction::End => return acc,
         };
@@ -69,7 +74,8 @@ fn part_2(mut data: Parsed) -> Out {
                 if !did_travel_back_in_time {
                     q.push_back((pc + 1, acc));
                 }
-                pc = pc - 1 + n;
+                pc += n;
+                continue;
             }
             Instruction::Nop(0) => {}
             Instruction::Nop(n) => {
@@ -78,9 +84,7 @@ fn part_2(mut data: Parsed) -> Out {
                 }
             }
             Instruction::End => {
-                let x = q.pop_back().unwrap();
-                pc = x.0;
-                acc = x.1;
+                (pc, acc) = q.pop_back().unwrap();
 
                 did_travel_back_in_time = true;
 
