@@ -73,21 +73,20 @@ fn part_2(mut data: Parsed) -> Out {
             Command::Acc(n) => acc += n,
             Command::Jmp(n) => {
                 if !did_travel_back_in_time {
-                    q.push_back((pc + 1, acc, data.clone()));
+                    q.push_back((pc + 1, acc));
                 }
                 pc = pc - 1 + n;
             }
             Command::Nop(0) => {}
             Command::Nop(n) => {
                 if !did_travel_back_in_time {
-                    q.push_back((pc + n, acc, data.clone()));
+                    q.push_back((pc + n, acc));
                 }
             }
             Command::End => {
                 let x = q.pop_back().unwrap();
                 pc = x.0;
                 acc = x.1;
-                data = x.2;
 
                 did_travel_back_in_time = true;
 
