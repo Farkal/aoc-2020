@@ -3,11 +3,11 @@ use bstr_parse::*;
 use itertools::Itertools;
 use std::{collections::VecDeque, fs::File, io::Read, mem::swap};
 
-type Parsed = Vec<Command>;
+type Parsed = Vec<Instruction>;
 type Out = i32;
 
 #[derive(Clone, Debug)]
-enum Command {
+enum Instruction {
     Jmp(i32),
     Acc(i32),
     Nop(i32),
@@ -30,9 +30,9 @@ fn parse_input(input: &[u8]) -> Parsed {
             let cmd = iter.next().unwrap();
             let value = iter.next().unwrap().parse().unwrap();
             match cmd {
-                b"jmp" => Command::Jmp(value),
-                b"acc" => Command::Acc(value),
-                b"nop" => Command::Nop(value),
+                b"jmp" => Instruction::Jmp(value),
+                b"acc" => Instruction::Acc(value),
+                b"nop" => Instruction::Nop(value),
                 _ => panic!(),
             }
         })
@@ -44,16 +44,16 @@ fn part_1(mut data: Parsed) -> Out {
     let mut pc: i32 = 0;
 
     loop {
-        let mut inst = Command::End;
+        let mut inst = Instruction::End;
         swap(&mut inst, &mut data[pc as usize]);
 
         pc += 1;
 
         match inst {
-            Command::Acc(n) => acc += n,
-            Command::Jmp(n) => pc = pc - 1 + n,
-            Command::Nop(_) => {}
-            Command::End => return acc,
+            Instruction::Acc(n) => acc += n,
+            Instruction::Jmp(n) => pc = pc - 1 + n,
+            Instruction::Nop(_) => {}
+            Instruction::End => return acc,
         };
     }
 }
@@ -66,24 +66,24 @@ fn part_2(mut data: Parsed) -> Out {
     let mut did_travel_back_in_time = false;
 
     while pc < data.len() as i32 {
-        let mut inst = Command::End;
+        let mut inst = Instruction::End;
         swap(&mut inst, &mut data[pc as usize]);
 
         match inst {
-            Command::Acc(n) => acc += n,
-            Command::Jmp(n) => {
+            Instruction::Acc(n) => acc += n,
+            Instruction::Jmp(n) => {
                 if !did_travel_back_in_time {
                     q.push_back((pc + 1, acc));
                 }
                 pc = pc - 1 + n;
             }
-            Command::Nop(0) => {}
-            Command::Nop(n) => {
+            Instruction::Nop(0) => {}
+            Instruction::Nop(n) => {
                 if !did_travel_back_in_time {
                     q.push_back((pc + n, acc));
                 }
             }
-            Command::End => {
+            Instruction::End => {
                 let x = q.pop_back().unwrap();
                 pc = x.0;
                 acc = x.1;
