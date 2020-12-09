@@ -18,9 +18,12 @@ fn parse_input(input: &[u8]) -> Vec<u64> {
 }
 
 fn part_1(data: &[u64], preamble: usize) -> (u64, usize) {
+    let mut s = data[0..preamble - 1].iter().collect::<HashSet<_>>();
+
     for i in 0..=data.len() - preamble {
+        s.insert(&data[i + preamble]);
+
         let current = data[i + preamble];
-        let s = data[i..i + preamble].iter().collect::<HashSet<_>>();
 
         if !data[i..i + preamble]
             .iter()
@@ -30,6 +33,7 @@ fn part_1(data: &[u64], preamble: usize) -> (u64, usize) {
         {
             return (current, i + preamble);
         }
+        s.remove(&data[i]);
     }
     unreachable!()
 }
