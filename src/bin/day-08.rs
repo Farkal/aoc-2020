@@ -49,7 +49,7 @@ fn part_1(mut data: Parsed) -> Out {
         match replace(&mut data[pc as usize], Instruction::End) {
             Instruction::Acc(n) => acc += n,
             Instruction::Jmp(n) => {
-                pc = pc + n;
+                pc += n;
                 continue;
             }
             Instruction::Nop(_) => {}
