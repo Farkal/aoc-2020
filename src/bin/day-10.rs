@@ -26,8 +26,9 @@ fn parse_input(input: &[u8]) -> Vec<usize> {
 fn part_1(data: &[usize]) -> usize {
     let (diff_1, diff_3) =
         data.iter()
-            .zip(data.iter().skip(1))
-            .fold((0, 1), |(diff_1, diff_3), (a, b)| match b - a {
+            .tuple_windows()
+            .map(|(a, b)| b - a)
+            .fold((0, 1), |(diff_1, diff_3), diff| match diff {
                 3 => (diff_1, diff_3 + 1),
                 1 => (diff_1 + 1, diff_3),
                 _ => (diff_1, diff_3),
@@ -38,7 +39,7 @@ fn part_1(data: &[usize]) -> usize {
 
 fn part_2(data: &[usize]) -> usize {
     data.iter()
-        .zip(data.iter().skip(1))
+        .tuple_windows()
         .map(|(a, b)| b - a)
         .fold((1, 0, 0), |(diff_1, diff_2, diff_3), diff| match diff {
             1 => (diff_1 + diff_2 + diff_3, diff_1, diff_2),
