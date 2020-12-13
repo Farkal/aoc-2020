@@ -105,25 +105,23 @@ fn part_2(data: &[Vec<Seat>]) -> usize {
                 .filter(|(a, b)| (a, b) != (&0, &0))
                 .map(|(a, b)| {
                     (1..)
-                        .find_map(|n| {
-                            let seat = last_generation
+                        .map(|n| {
+                            last_generation
                                 .get(if a < 0 {
-                                    x.checked_sub((n * -a) as usize).unwrap_or(usize::MAX)
+                                    x.checked_sub((n * -a) as usize)?
                                 } else {
                                     x + (n * a) as usize
+                                })?
+                                .get(if b < 0 {
+                                    y.checked_sub((n * -b) as usize)?
+                                } else {
+                                    y + (n * b) as usize
                                 })
-                                .and_then(|l| {
-                                    l.get(if b < 0 {
-                                        y.checked_sub((n * -b) as usize).unwrap_or(usize::MAX)
-                                    } else {
-                                        y + (n * b) as usize
-                                    })
-                                });
-                            match seat {
-                                None => Some(Seat::Floor),
-                                Some(Seat::Floor) => None,
-                                Some(s) => Some(s.clone()),
-                            }
+                        })
+                        .find_map(|seat| match seat {
+                            None => Some(Seat::Floor),
+                            Some(Seat::Floor) => None,
+                            Some(s) => Some(s.clone()),
                         })
                         .unwrap()
                 });
