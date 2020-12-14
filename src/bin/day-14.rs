@@ -58,13 +58,13 @@ fn part_1(data: &[Instruction]) -> u64 {
             |(mut memory, mut mask), inst| {
                 match inst {
                     Instruction::Mask(m) => mask = m,
-                    Instruction::Set((x, y)) => {
+                    Instruction::Set((addr, value)) => {
                         memory.insert(
-                            *x,
-                            mask.iter().enumerate().fold(*y, |y, (i, v)| match v {
-                                Bit::One => y | (1 << i),
-                                Bit::Zero => y & !(1 << i),
-                                Bit::Floating => y,
+                            *addr,
+                            mask.iter().enumerate().fold(*value, |acc, (i, v)| match v {
+                                Bit::One => acc | (1 << i),
+                                Bit::Zero => acc & !(1 << i),
+                                Bit::Floating => acc,
                             }),
                         );
                     }
@@ -84,26 +84,26 @@ fn part_2(data: &[Instruction]) -> u64 {
             |(mut memory, mut mask), inst| {
                 match inst {
                     Instruction::Mask(m) => mask = m,
-                    Instruction::Set((x, y)) => mask
+                    Instruction::Set((addr, value)) => mask
                         .iter()
                         .enumerate()
-                        .fold(vec![*x], |mut addrs, (i, v)| {
-                            match v {
-                                Bit::One => addrs.iter_mut().for_each(|addr| *addr |= 1 << i),
+                        .fold(vec![*addr], |mut addrs, (i, addr)| {
+                            match addr {
+                                Bit::One => addrs.iter_mut().for_each(|a| *a |= 1 << i),
                                 Bit::Zero => {}
-                                Bit::Floating => addrs.extend(addrs.clone().iter().map(|addr| {
-                                    match (addr >> i) & 1 {
-                                        0 => addr | (1 << i),
-                                        1 => addr & !(1 << i),
+                                Bit::Floating => {
+                                    addrs.extend(addrs.clone().iter().map(|a| match (a >> i) & 1 {
+                                        0 => a | (1 << i),
+                                        1 => a & !(1 << i),
                                         _ => unreachable!(),
-                                    }
-                                })),
+                                    }))
+                                }
                             };
                             addrs
                         })
                         .iter()
                         .for_each(|addr| {
-                            memory.insert(*addr as u64, *y as u64);
+                            memory.insert(*addr as u64, *value as u64);
                         }),
                 };
                 (memory, mask)
