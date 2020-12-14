@@ -21,8 +21,7 @@ fn read_input() -> Vec<u8> {
 fn parse_input(input: &[u8]) -> (i64, Vec<Departure>) {
     input
         .lines()
-        .tuples()
-        .next()
+        .collect_tuple()
         .map(|(ts, deps)| {
             (
                 ts.parse().unwrap(),
