@@ -89,8 +89,8 @@ fn part_2(data: &[Instruction]) -> u64 {
                     Instruction::Set((addr, value)) => mask
                         .iter()
                         .enumerate()
-                        .fold(vec![*addr], |mut addrs, (i, addr)| {
-                            match addr {
+                        .fold(vec![*addr], |mut addrs, (i, bit)| {
+                            match bit {
                                 Bit::One => addrs.iter_mut().for_each(|a| *a |= 1 << i),
                                 Bit::Zero => {}
                                 Bit::Floating => {
