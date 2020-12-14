@@ -61,11 +61,13 @@ fn part_1(data: &[Instruction]) -> u64 {
                     Instruction::Set((addr, value)) => {
                         memory.insert(
                             *addr,
-                            mask.iter().enumerate().fold(*value, |acc, (i, v)| match v {
-                                Bit::One => acc | (1 << i),
-                                Bit::Zero => acc & !(1 << i),
-                                Bit::Floating => acc,
-                            }),
+                            mask.iter()
+                                .enumerate()
+                                .fold(*value, |acc, (i, bit)| match bit {
+                                    Bit::One => acc | (1 << i),
+                                    Bit::Zero => acc & !(1 << i),
+                                    Bit::Floating => acc,
+                                }),
                         );
                     }
                 };
