@@ -1,4 +1,4 @@
-#![feature(destructuring_assignment, bool_to_option)]
+#![feature(destructuring_assignment)]
 
 use bstr::ByteSlice;
 use bstr_parse::*;
@@ -56,11 +56,10 @@ fn part_1(
         .map(|ticket| {
             ticket
                 .iter()
-                .filter_map(|field| {
+                .filter(|field| {
                     rules
                         .iter()
                         .all(|(r0, r1, _)| !r0.contains(field) && !r1.contains(field))
-                        .then_some(field)
                 })
                 .sum::<usize>()
         })
