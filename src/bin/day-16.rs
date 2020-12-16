@@ -1,4 +1,4 @@
-#![feature(destructuring_assignment)]
+#![feature(destructuring_assignment, bool_to_option)]
 
 use bstr::ByteSlice;
 use bstr_parse::*;
@@ -84,9 +84,8 @@ fn part_2(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
                 .iter()
                 .zip(possibilities.iter_mut())
                 .for_each(|(r, possible_set)| {
-                    if possible_set.contains(&i) && !r.contains(field) {
-                        possible_set.remove(&i);
-                    }
+                    (possible_set.contains(&i) && !r.contains(field))
+                        .then(|| possible_set.remove(&i));
                 })
         });
     });
@@ -97,7 +96,7 @@ fn part_2(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
         let remove_list = possibilities
             .iter()
             .filter_map(|i| i.iter().exactly_one().ok())
-            .cloned()
+            .copied()
             .collect_vec();
 
         possibilities
