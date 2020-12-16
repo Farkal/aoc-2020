@@ -2,7 +2,7 @@
 
 use bstr::ByteSlice;
 use bstr_parse::*;
-use itertools::{izip, Itertools};
+use itertools::Itertools;
 use regex::bytes::Regex;
 use std::{collections::HashSet, fs::File, io::Read, ops::RangeInclusive};
 
@@ -14,12 +14,20 @@ fn read_input() -> Vec<u8> {
     out
 }
 
-fn parse_input(
-    input: &[u8],
-) -> (
-    Vec<Vec<usize>>,
-    Vec<(RangeInclusive<usize>, RangeInclusive<usize>, bool)>,
-) {
+#[derive(Clone)]
+struct Rule {
+    range_a: RangeInclusive<usize>,
+    range_b: RangeInclusive<usize>,
+    is_departure: bool,
+}
+
+impl Rule {
+    fn contains(&self, n: &usize) -> bool {
+        self.range_a.contains(&n) || self.range_b.contains(&n)
+    }
+}
+
+fn parse_input(input: &[u8]) -> (Vec<Vec<usize>>, Vec<Rule>) {
     let (rules, my_ticket, nearby_tickets) = input.split_str("\n\n").collect_tuple().unwrap();
 
     let re = Regex::new(r".+: (?P<min1>\d+)-(?P<max1>\d+) or (?P<min2>\d+)-(?P<max2>\d+)").unwrap();
@@ -29,11 +37,11 @@ fn parse_input(
         .map(|r| {
             let m = re.captures(r).unwrap();
 
-            (
-                m["min1"].parse().unwrap()..=m["max1"].parse().unwrap(),
-                m["min2"].parse().unwrap()..=m["max2"].parse().unwrap(),
-                r.starts_with_str("departure"),
-            )
+            Rule {
+                range_a: m["min1"].parse().unwrap()..=m["max1"].parse().unwrap(),
+                range_b: m["min2"].parse().unwrap()..=m["max2"].parse().unwrap(),
+                is_departure: r.starts_with_str("departure"),
+            }
         })
         .collect_vec();
 
@@ -47,48 +55,39 @@ fn parse_input(
     (tickets, rules)
 }
 
-fn part_1(
-    tickets: &[Vec<usize>],
-    rules: &[(RangeInclusive<usize>, RangeInclusive<usize>, bool)],
-) -> usize {
+fn part_1(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
     tickets
         .iter()
         .map(|ticket| {
             ticket
                 .iter()
-                .filter(|field| {
-                    rules
-                        .iter()
-                        .all(|(r0, r1, _)| !r0.contains(field) && !r1.contains(field))
-                })
+                .filter(|field| rules.iter().all(|r| !r.contains(field)))
                 .sum::<usize>()
         })
         .sum()
 }
 
-fn part_2(
-    tickets: &[Vec<usize>],
-    rules: &[(RangeInclusive<usize>, RangeInclusive<usize>, bool)],
-) -> usize {
+fn part_2(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
     let mut possibilities: Vec<HashSet<usize>> = (0..rules.len())
         .map(|_| (0..rules.len()).collect())
         .collect();
 
     let valid_tickets = tickets.iter().filter(|ticket| {
-        ticket.iter().all(|field| {
-            rules
-                .iter()
-                .any(|(r0, r1, _)| r0.contains(field) || r1.contains(field))
-        })
+        ticket
+            .iter()
+            .all(|field| rules.iter().any(|r| r.contains(field)))
     });
 
     valid_tickets.for_each(|ticket| {
         ticket.iter().enumerate().for_each(|(i, field)| {
-            izip!(rules.iter(), possibilities.iter_mut()).for_each(|((r0, r1, _), possible_set)| {
-                if possible_set.contains(&i) && !r0.contains(field) && !r1.contains(field) {
-                    possible_set.remove(&i);
-                }
-            })
+            rules
+                .iter()
+                .zip(possibilities.iter_mut())
+                .for_each(|(r, possible_set)| {
+                    if possible_set.contains(&i) && !r.contains(field) {
+                        possible_set.remove(&i);
+                    }
+                })
         });
     });
 
@@ -114,7 +113,7 @@ fn part_2(
     possibilities
         .iter()
         .zip(rules.iter())
-        .filter(|(_, (_, _, pred))| *pred)
+        .filter(|(_, r)| r.is_departure)
         .map(|s| s.0.iter().exactly_one().unwrap())
         .map(|i| tickets[0][*i])
         .product()
