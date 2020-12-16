@@ -22,8 +22,8 @@ struct Rule {
 }
 
 impl Rule {
-    fn contains(&self, n: &usize) -> bool {
-        self.range_a.contains(&n) || self.range_b.contains(&n)
+    fn check(&self, n: &usize) -> bool {
+        self.range_a.contains(n) || self.range_b.contains(n)
     }
 }
 
@@ -34,13 +34,13 @@ fn parse_input(input: &[u8]) -> (Vec<Vec<usize>>, Vec<Rule>) {
 
     let rules = rules
         .lines()
-        .map(|r| {
-            let m = re.captures(r).unwrap();
+        .map(|rule| {
+            let m = re.captures(rule).unwrap();
 
             Rule {
                 range_a: m["min1"].parse().unwrap()..=m["max1"].parse().unwrap(),
                 range_b: m["min2"].parse().unwrap()..=m["max2"].parse().unwrap(),
-                is_departure: r.starts_with_str("departure"),
+                is_departure: rule.starts_with_str("departure"),
             }
         })
         .collect_vec();
@@ -61,7 +61,7 @@ fn part_1(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
         .map(|ticket| {
             ticket
                 .iter()
-                .filter(|field| rules.iter().all(|r| !r.contains(field)))
+                .filter(|field| rules.iter().all(|rule| !rule.check(field)))
                 .sum::<usize>()
         })
         .sum()
@@ -75,7 +75,7 @@ fn part_2(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
     let valid_tickets = tickets.iter().filter(|ticket| {
         ticket
             .iter()
-            .all(|field| rules.iter().any(|r| r.contains(field)))
+            .all(|field| rules.iter().any(|rule| rule.check(field)))
     });
 
     valid_tickets.for_each(|ticket| {
@@ -83,8 +83,8 @@ fn part_2(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
             rules
                 .iter()
                 .zip(possibilities.iter_mut())
-                .for_each(|(r, possible_set)| {
-                    (possible_set.contains(&i) && !r.contains(field))
+                .for_each(|(rule, possible_set)| {
+                    (possible_set.contains(&i) && !rule.check(field))
                         .then(|| possible_set.remove(&i));
                 })
         });
@@ -112,7 +112,7 @@ fn part_2(tickets: &[Vec<usize>], rules: &[Rule]) -> usize {
     possibilities
         .iter()
         .zip(rules.iter())
-        .filter(|(_, r)| r.is_departure)
+        .filter(|(_, rule)| rule.is_departure)
         .map(|s| s.0.iter().exactly_one().unwrap())
         .map(|i| tickets[0][*i])
         .product()
