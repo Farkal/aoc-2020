@@ -1,0 +1,24 @@
+// Based on https://github.com/lalrpop/lalrpop/blob/master/doc/calculator/src/calculator4.lalrpop
+
+use std::str::FromStr;
+
+grammar;
+
+pub Expr: u64 = {
+    <l:Expr> "*" <r:Summand> => l * r,
+    Summand,
+};
+
+Summand: u64 = {
+    <l:Summand> "+" <r:Term> => l + r,
+    Term,
+};
+
+Term: u64 = {
+    Num,
+    "(" <Expr> ")",
+};
+
+Num: u64 = {
+    r"[0-9]+" => u64::from_str(<>).unwrap(),
+};
