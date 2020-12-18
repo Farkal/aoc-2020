@@ -1,5 +1,6 @@
 use itertools::Itertools;
 use lalrpop_util::lalrpop_mod;
+use rayon::prelude::*;
 use std::{fs::File, io::Read};
 
 lalrpop_mod!(pub day_18_p1);
@@ -19,13 +20,17 @@ fn parse_input(input: &str) -> Vec<&str> {
 fn part_1(data: &[&str]) -> u64 {
     let parser = day_18_p1::ExprParser::new();
 
-    data.iter().map(|term| parser.parse(term).unwrap()).sum()
+    data.par_iter()
+        .map(|term| parser.parse(term).unwrap())
+        .sum()
 }
 
 fn part_2(data: &[&str]) -> u64 {
     let parser = day_18_p2::ExprParser::new();
 
-    data.iter().map(|term| parser.parse(term).unwrap()).sum()
+    data.par_iter()
+        .map(|term| parser.parse(term).unwrap())
+        .sum()
 }
 
 fn main() {
