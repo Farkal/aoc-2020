@@ -10,7 +10,7 @@ use std::{collections::HashMap, fs::File, io::Read};
 enum Rule {
     Seq(Vec<u8>),
     Or(Vec<u8>, Vec<u8>),
-    Lit(char),
+    Lit(u8),
 }
 
 fn read_input() -> Vec<u8> {
@@ -41,11 +41,7 @@ fn parse_input(input: &[u8]) -> (HashMap<u8, Rule>, Vec<Vec<u8>>) {
 
             let rule = if let Some(lit) = rule.split_str("\"").nth(1) {
                 assert_eq!(lit.len(), 1);
-                Rule::Lit(match &lit[0] {
-                    b'a' => 'a',
-                    b'b' => 'b',
-                    _ => unreachable!(),
-                })
+                Rule::Lit(lit[0])
             } else if let Some((a, b)) = rule.split_str("|").collect_tuple() {
                 let rule_a = parse_list(a);
                 let rule_b = parse_list(b);
@@ -77,7 +73,11 @@ fn format_rules(
     }
 
     let out = match rule {
-        Rule::Lit(lit) => lit.to_string(),
+        Rule::Lit(lit) => match lit {
+            b'a' => "a".to_string(),
+            b'b' => "b".to_string(),
+            _ => unreachable!(),
+        },
         Rule::Seq(seq) => format!(
             "(?:{})",
             seq.iter()
