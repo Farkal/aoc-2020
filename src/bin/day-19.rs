@@ -120,7 +120,7 @@ fn part_2(rules: &mut HashMap<u8, Rule>, messsages: &[Vec<u8>]) -> usize {
     let rule31 = format_rules(rules.get(&31).unwrap(), Some(31), rules, &mut cache);
     let fake_loop_2 = (1..=10)
         .rev()
-        .map(|i| format!("(?:(?:{}{{{}}})(?:{}{{{}}}))", rule42, i, rule31, i))
+        .map(|i| format!("(?:{}{{{}}}{}{{{}}})", rule42, i, rule31, i))
         .join("|");
     cache.insert(11, format!("(?:{})", fake_loop_2));
 
